@@ -9,13 +9,13 @@
 
 ## Legend
 
-| Status | Meaning |
-|---|---|
-| `ready` | Defined, not yet started |
-| `in_progress` | Developer actively working |
-| `review` | Developer done — awaiting Master approval |
-| `done` | Master has verified and accepted |
-| `blocked` | Cannot proceed — dependency missing |
+| Status | Meaning | Who transitions |
+|---|---|---|
+| `ready` | Defined, not yet started | — |
+| `in_progress` | Developer actively working | Developer |
+| `review` | Developer done — awaiting Master verification | Developer → review |
+| `done` | Master has verified and accepted all evidence | Master only |
+| `blocked` | Cannot proceed — dependency missing | Either |
 
 ---
 
@@ -38,14 +38,24 @@
 
 ## Blocked Items
 
-| Item | Blocked By | Resolution |
+| Item | Blocked By | Resolution Needed |
 |---|---|---|
-| (None) | — | Gemini auth was resolved. |
+| (None currently) | — | — |
+
+---
+
+## Known Limitations (Not Blocking)
+
+| Item | Detail |
+|---|---|
+| Gemini code review | Responds to prompts; structured code review not yet tested |
+| `agy --print` speed | 15–60s response time — not suitable for automated sub-tasks |
+| Ollama CLI ping | Test ran >5 min with no log output; result unconfirmed — see TASK-001-result.md |
 
 ---
 
 ## Notes
 
-- Task status moves: `ready → in_progress → review` by **Developer (Antigravity)**
-- `review → done` by **Master (Codex) only**
+- `review → done` transition: **Master (Codex) only**, after verifying evidence in `TASK-XXX-result.md`
+- `ready → in_progress → review` transitions: **Developer (Antigravity)**
 - Each task must have a definition file in `docs/tasks/` and a result file in `docs/progress/`

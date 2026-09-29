@@ -12,8 +12,9 @@ Build an AI-powered stock analysis and paper trading system that:
 1. Fetches market data for **SET50** Thai stocks (and US stocks for validation)
 2. Computes technical indicators automatically
 3. Uses a **local LLM (Ollama)** to generate structured BUY / HOLD / SELL analysis
-4. Supports **paper trading simulation** (no real money, no broker connection yet)
-5. Eventually integrates with KGI broker API — **not in current phase**
+4. Supports **paper trading simulation** (no real money, no broker connection)
+
+> **Note:** KGI broker API integration has been mentioned as a possible future direction but has **not been agreed upon or approved**. It must not be treated as a confirmed roadmap item.
 
 ---
 
@@ -22,11 +23,11 @@ Build an AI-powered stock analysis and paper trading system that:
 | Constraint | Detail |
 |---|---|
 | **No real trading** | Paper trading only. No real-money orders. |
-| **No KGI API** | Broker integration is future work |
+| **No broker API** | No live order routing. KGI API is unapproved future direction. |
 | **No Dashboard yet** | UI development is next phase |
-| **Local LLM only** | Ollama (`qwen3.5:4b`) — no external AI API calls |
+| **Local LLM only** | Ollama (`qwen3.5:4b`) — no external AI API calls in application |
 | **SET50 focus** | Primary market. US tickers used for testing only. |
-| **yfinance as data source** | Real broker data feed is future work |
+| **yfinance as data source** | Live broker data feed is future work |
 
 ---
 
@@ -34,45 +35,50 @@ Build an AI-powered stock analysis and paper trading system that:
 
 ### Repository
 - **GitHub:** `https://github.com/Rrom4ll/Agent_Trading.git`
-- **Branch:** `main` — 3 commits
-- **Working tree:** Clean
+- **Branch:** `main` — 4 commits
+- **Working tree:** Clean (after TASK-001 commit)
 
 ### Implemented & Verified
 | Component | File | Status |
 |---|---|---|
-| Market data pipeline | `src/tools/market_data.py` | ✅ Working |
-| Technical indicators | `src/tools/market_data.py` | ✅ SMA/RSI/MACD/BB/ATR |
-| Parquet cache | `src/data/cache/` | ✅ Working (1hr TTL) |
-| AI Analyst Agent | `src/agents/analyst_agent.py` | ✅ Working |
-| Ollama integration | `src/agents/analyst_agent.py` | ✅ think=False applied |
-| CLI entry point | `main.py` | ✅ Streaming + batch |
+| Market data pipeline | `src/tools/market_data.py` | ✅ Verified — AAPL tested end-to-end |
+| Technical indicators | `src/tools/market_data.py` | ✅ SMA/RSI/MACD/BB/ATR computed |
+| Parquet cache | `src/data/cache/` | ✅ 1hr TTL implemented |
+| AI Analyst Agent | `src/agents/analyst_agent.py` | ✅ Verified — AAPL produced HOLD output |
+| Ollama integration | `src/agents/analyst_agent.py` | ✅ `think=False` applied; streaming works |
+| CLI entry point | `main.py` | ✅ `try/except` per ticker; streaming + batch |
 | Config system | `config/settings.py` | ✅ dotenv-based |
 
 ### Known Issues / Unverified Items
-| Item | Status | Note |
+| Item | Status | Detail |
 |---|---|---|
-| RSI edge cases (< 14 bars) | `[UNVERIFIED]` | No test for short history |
-| Data freshness validation | `[UNVERIFIED]` | Cache may serve stale data |
-| SET50 tickers | `[UNVERIFIED]` | Only US tickers tested so far |
-| Thai stock format `.BK` | `[UNVERIFIED]` | e.g., `PTT.BK` — yfinance format unconfirmed |
-| AI response format consistency | `[UNVERIFIED]` | No structured output parsing yet |
-| Error handling (bad ticker) | `[PARTIAL]` | ValueError raised but not caught gracefully in CLI |
+| RSI: < 14 bars (rising) | `[UNVERIFIED]` | No test; may raise ZeroDivisionError or return NaN |
+| RSI: < 14 bars (falling) | `[UNVERIFIED]` | Same as above |
+| RSI: constant price | `[UNVERIFIED]` | Division by zero risk in gain/loss calculation |
+| Market data currency check | `[UNVERIFIED]` | Cache TTL exists; market-day awareness does not |
+| AI response format validation | `[UNVERIFIED]` | No parser; malformed output passed through raw |
+| stderr noise from yfinance | `[PARTIAL]` | `try/except` catches exception; HTTP 404 stack trace leaks to stderr |
+| SET50 Thai tickers (`.BK`) | `[UNVERIFIED]` | Only US tickers tested. `PTT.BK` format not confirmed. |
 
 ---
 
 ## 4. Tool Readiness (confirmed 2026-09-29)
 
-| Tool | Version | Headless/Non-interactive | Status |
-|---|---|---|---|
-| Python | 3.14.7 | ✅ Yes | Ready |
-| Git | 2.55.0 | ✅ Yes | Ready |
-| Ollama CLI | 0.34.4 | ✅ Yes (`ollama run model "prompt"`) | Ready |
-| `qwen3.5:4b` model | 3a145e630c7b | ✅ Loaded (3.4 GB) | Ready |
-| `agy` CLI (Antigravity) | 1.0.3 | ✅ Yes (`agy --print "..."`) | Ready |
-| Gemini CLI | 0.61.0 | ✅ Yes (with `--skip-trust`) | Ready |
-| yfinance | 1.7.0 | ✅ (Python lib) | Ready |
-| pandas | 3.0.6 | ✅ (Python lib) | Ready |
-| ollama SDK | 0.6.2 | ✅ (Python lib) | Ready |
+| Tool | Version | Non-interactive | Status | Evidence |
+|---|---|---|---|---|
+| Python | 3.14.7 | ✅ Yes | Ready | `python --version` |
+| Git | 2.55.0 | ✅ Yes | Ready | `git --version` |
+| Ollama CLI | 0.34.4 | ✅ Yes | Ready | `ollama --version` |
+| `qwen3.5:4b` model | 3a145e630c7b | ✅ Loaded | Ready | `ollama list` |
+| `agy` CLI (Antigravity) | 1.0.3 | ✅ `--print` flag | Ready (slow) | `agy --version`; `--print` confirmed in help text |
+| Gemini CLI | 0.61.0 | ✅ `--prompt --skip-trust` | Partially verified | Responds to prompt. Code review NOT yet tested. |
+| yfinance | 1.7.0 | ✅ Python lib | Ready | AAPL analysis succeeded |
+| pandas | 3.0.6 | ✅ Python lib | Ready | Used in market_data.py |
+| ollama SDK | 0.6.2 | ✅ Python lib | Ready | AAPL analysis succeeded |
+
+> **Gemini note:** "Responds to prompt" ≠ "can perform read-only code review". The latter has not been tested. Do not claim it works for code review until a structured code review task has been completed successfully.
+
+> **`agy --print` note:** Response time is 15–60+ seconds due to LLM latency. Not suitable for high-frequency sub-tasks. Human relay is the current coordination mode.
 
 ---
 
@@ -88,12 +94,10 @@ Agent_Trading/
 │   └── settings.py                 # Central config (Ollama URL, tickers, paths)
 ├── docs/
 │   ├── project_context.md          # This file
-│   └── progress/
-│       ├── handoff_status.md       # Historical handoff from session 1
-│       ├── task_board.md           # All tasks and their statuses
-│       ├── TASK-001-result.md      # Evidence for TASK-001
-│       └── TASK-002-result.md      # (future)
-├── docs/
+│   ├── progress/
+│   │   ├── handoff_status.md       # Session 1 summary
+│   │   ├── task_board.md           # Task status tracker
+│   │   └── TASK-001-result.md      # Evidence for TASK-001
 │   └── tasks/
 │       ├── TASK-001.md             # Task definition: Setup coordination
 │       └── TASK-002.md             # Task definition: Baseline QA (ready)
@@ -104,7 +108,7 @@ Agent_Trading/
 │   ├── __init__.py
 │   ├── agents/
 │   │   ├── __init__.py
-│   │   └── analyst_agent.py        # AnalystAgent — Ollama integration
+│   │   └── analyst_agent.py        # AnalystAgent — application component using Ollama
 │   ├── tools/
 │   │   ├── __init__.py
 │   │   └── market_data.py          # yfinance + technical indicators
@@ -117,11 +121,11 @@ Agent_Trading/
 
 ## 6. Upcoming Work
 
-| Task | Priority | Phase |
+| Task | Priority | Status |
 |---|---|---|
-| TASK-002: Baseline QA (RSI edge cases, data quality, error handling) | High | Current |
-| TASK-003: SET50 ticker validation | High | Current |
-| TASK-004: Structured AI output (JSON schema) | Medium | Next |
-| TASK-005: Paper trading engine | Medium | Next |
-| TASK-006: Dashboard / UI | Low | Future |
-| TASK-007: KGI API integration | Low | Future |
+| TASK-001: Setup coordination system | High | `review` |
+| TASK-002: Baseline QA | High | `ready` |
+| TASK-003: SET50 ticker validation | Medium | Not yet defined |
+| TASK-004: Structured AI output (JSON schema) | Medium | Folded into TASK-002 |
+| TASK-005: Paper trading engine | Low | Not yet defined |
+| TASK-006: Dashboard / UI | Low | Not yet defined |
