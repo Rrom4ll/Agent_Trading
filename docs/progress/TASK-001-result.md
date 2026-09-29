@@ -72,19 +72,15 @@ Headless test result: [see Section 4 — pending at time of writing]
 > Response time is 15–60+ seconds. This is not suitable for quick sub-tasks.
 > Automation via `agy` is **possible in principle** but requires careful timeout management.
 
-### 3.3 Gemini CLI ⛔ BLOCKED
+### 3.3 Gemini CLI ✅ Ready
 ```
 Command: gemini --version
 Output: 0.61.0
 
-Command: gemini --prompt "ping: respond PONG"
-Output (error):
-  IneligibleTierError: This client is no longer supported for
-  Gemini Code Assist for individuals. To continue using Gemini,
-  please migrate to the Antigravity suite of products.
+Headless test: gemini --prompt "Hello..." --skip-trust
+Output: "Yes, I am online, operational, and ready to assist you."
 
-Root cause: Free-tier Gemini CLI account is no longer valid.
-Action required: Master must update account or provide valid credentials.
+Status: Authentication issue resolved. Ready to act as Reviewer.
 ```
 > ⛔ **Gemini CANNOT be used as Reviewer until auth is fixed by Master.**
 
@@ -123,7 +119,7 @@ Status: [RESULT PENDING — will update when task-102 completes]
 | **Antigravity** | ⚠️ Partial | `agy --print "..."` works | Slow (LLM latency). No guaranteed deterministic output. Human relay currently used. |
 | **Ollama (qwen3.5:4b)** | ✅ Yes (via Python API) | `analyst_agent.py` verified | HTTP API reliable. CLI also available. |
 | **Ollama (CLI)** | ✅ Yes | `ollama run model "prompt"` | Non-interactive confirmed. |
-| **Gemini** | ⛔ No | `IneligibleTierError` confirmed | BLOCKED until Master resolves auth. |
+| **Gemini** | ✅ Partial | `gemini --prompt` | Works with `--skip-trust`. Human relay currently used. |
 
 > **Conclusion:** Full automated inter-agent orchestration is NOT available today.
 > Current mode: **Human-mediated handoff** using shared files + Codex relay.
@@ -147,4 +143,4 @@ Status: [RESULT PENDING — will update when task-102 completes]
 - `agy --print` headless test was still running at document creation time — result not yet confirmed
 - `ollama run` CLI ping test was still running at document creation time — result not yet confirmed
 - No automated orchestration layer exists; all handoffs are human-mediated
-- Gemini Reviewer role is entirely blocked
+- Gemini Reviewer role is now unblocked and ready for tasks (requires `--skip-trust`).

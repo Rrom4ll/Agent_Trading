@@ -43,13 +43,12 @@
 
 ---
 
-### Gemini (Reviewer — NOT YET ACTIVE)
+### Gemini (Reviewer)
 - **Role:** Independent code/logic reviewer to validate Antigravity's outputs.
-- **Scope (intended):** Review code quality, flag logic errors, provide second opinion on prompts
-- **Current status:** ⛔ **BLOCKED** — `gemini CLI v0.61.0` installed but authentication fails.
-  - Error: `IneligibleTierError` — free-tier account is no longer supported; must migrate to Antigravity suite.
-  - **Gemini cannot receive tasks until auth issue is resolved by Master.**
-- **Tool access:** `gemini --prompt` headless mode available in principle, but non-functional currently
+- **Scope:** Review code quality, flag logic errors, provide second opinion on prompts
+- **Current status:** ✅ **ACTIVE** — Authentication resolved.
+  - Can be invoked in headless mode using `gemini --prompt "..." --skip-trust`.
+- **Tool access:** `gemini --prompt` headless mode is functional.
 
 ---
 

@@ -40,7 +40,7 @@
 
 | Item | Blocked By | Resolution |
 |---|---|---|
-| Gemini CLI reviewer | `IneligibleTierError` — auth broken | Master must update Gemini account or migrate to Antigravity suite |
+| (None) | — | Gemini auth was resolved. |
 
 ---
 

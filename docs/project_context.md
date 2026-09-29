@@ -69,7 +69,7 @@ Build an AI-powered stock analysis and paper trading system that:
 | Ollama CLI | 0.34.4 | ✅ Yes (`ollama run model "prompt"`) | Ready |
 | `qwen3.5:4b` model | 3a145e630c7b | ✅ Loaded (3.4 GB) | Ready |
 | `agy` CLI (Antigravity) | 1.0.3 | ✅ Yes (`agy --print "..."`) | Ready |
-| Gemini CLI | 0.61.0 | ⛔ Auth broken | BLOCKED |
+| Gemini CLI | 0.61.0 | ✅ Yes (with `--skip-trust`) | Ready |
 | yfinance | 1.7.0 | ✅ (Python lib) | Ready |
 | pandas | 3.0.6 | ✅ (Python lib) | Ready |
 | ollama SDK | 0.6.2 | ✅ (Python lib) | Ready |
